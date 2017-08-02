@@ -269,8 +269,6 @@ class SparseVectorTest
     //
     fun testReverseVectorOfN(n: Int)
     {
-        println(n)
-
         var vector: Vector<Int> = SparseVectors.ofSize(n, 0)
 
         for (i in (n - 1) downTo 0)
@@ -327,6 +325,67 @@ class SparseVectorTest
         for (i in 0..n - 1)
         {
             assertEquals("Index $i in vector of $n", i, vector.get(i))
+        }
+    }
+
+    @Test
+    fun testClearVectors()
+    {
+        for(n in 1..100)
+        {
+            testClearInsideVectorOfN(n)
+        }
+    }
+
+
+    //
+    // set values from middle of vector to either end of the vector
+    //
+    fun testClearInsideVectorOfN(n: Int)
+    {
+        println(n)
+
+        var vector: Vector<Int> = SparseVectors.ofSize(n, 0)
+
+        //
+        // fill the vector
+        //
+        for(i in 0..n-1)
+        {
+            vector = vector.set(i, i)
+        }
+
+
+        //
+        // clear values from the middle, outwards
+        //
+        val m = n / 2;
+        if((n - m * 2) > 0)// odd number
+        {
+            //
+            // odd value for n
+            //
+            vector = vector.set(m, 0)
+            for (i in 1..m)
+            {
+                vector = vector.set(m - i, 0)
+                vector = vector.set(m + i, 0)
+            }
+        }
+        else
+        {
+            //
+            // even value for n
+            //
+            for (i in 0..(m - 1))
+            {
+                vector = vector.set(m - 1 - i, 0)
+                vector = vector.set(m + i, 0)
+            }
+        }
+        for (i in 0..n - 1)
+        {
+            assertEquals("Index $i in vector of $n", 0, vector.get(i))
         }
     }
 

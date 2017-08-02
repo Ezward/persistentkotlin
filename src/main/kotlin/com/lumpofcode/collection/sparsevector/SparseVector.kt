@@ -240,8 +240,8 @@ class SparseVector2<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         val i = sparseIndex(sparsity, index)
         return when (i)
         {
-            0 -> SparseVector1(size, zero, sparsity and 1.inv(), e1)
-            1 -> SparseVector1(size, zero, sparsity and 2.inv(), e0)
+            0 -> SparseVector1(size, zero, sparsity and (1 shl index).inv(), e1)
+            1 -> SparseVector1(size, zero, sparsity and (1 shl index).inv(), e0)
             else -> this
         }
 
@@ -323,9 +323,9 @@ class SparseVector3<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         val i = sparseIndex(sparsity, index)
         return when (i)
         {
-            0 -> SparseVector2(size, zero, sparsity and 1.inv(), e1, e2)
-            1 -> SparseVector2(size, zero, sparsity and 2.inv(), e0, e2)
-            2 -> SparseVector2(size, zero, sparsity and 4.inv(), e0, e1)
+            0 -> SparseVector2(size, zero, sparsity and (1 shl index).inv(), e1, e2)
+            1 -> SparseVector2(size, zero, sparsity and (1 shl index).inv(), e0, e2)
+            2 -> SparseVector2(size, zero, sparsity and (1 shl index).inv(), e0, e1)
             else -> this
         }
 
@@ -414,10 +414,10 @@ class SparseVector4<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         val i = sparseIndex(sparsity, index)
         return when (i)
         {
-            0 -> SparseVector3(size, zero, sparsity and 1.inv(), e1, e2, e3)
-            1 -> SparseVector3(size, zero, sparsity and 2.inv(), e0, e2, e3)
-            2 -> SparseVector3(size, zero, sparsity and 3.inv(), e0, e1, e3)
-            3 -> SparseVector3(size, zero, sparsity and 4.inv(), e0, e1, e2)
+            0 -> SparseVector3(size, zero, sparsity and (1 shl index).inv(), e1, e2, e3)
+            1 -> SparseVector3(size, zero, sparsity and (1 shl index).inv(), e0, e2, e3)
+            2 -> SparseVector3(size, zero, sparsity and (1 shl index).inv(), e0, e1, e3)
+            3 -> SparseVector3(size, zero, sparsity and (1 shl index).inv(), e0, e1, e2)
             else -> this
         }
 
@@ -677,8 +677,8 @@ class SparseVectorTrie2<T>(val level: Int, val size: Int, val zero: T, val spars
         val i = sparseIndex(sparsity, trieIndex)
         return when (i)
         {
-            0 -> SparseVectorTrie1(level, size, zero, sparsity and 1.inv(), e1)
-            1 -> SparseVectorTrie1(level, size, zero, sparsity and 2.inv(), e0)
+            0 -> SparseVectorTrie1(level, size, zero, sparsity and (1 shl trieIndex).inv(), e1)
+            1 -> SparseVectorTrie1(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0)
             else -> this
         }
     }
@@ -784,9 +784,9 @@ class SparseVectorTrie3<T>(val level: Int, val size: Int, val zero: T, val spars
         val i = sparseIndex(sparsity, trieIndex)
         return when (i)
         {
-            0 -> SparseVectorTrie2(level, size, zero, sparsity and 1.inv(), e1, e2)
-            1 -> SparseVectorTrie2(level, size, zero, sparsity and 2.inv(), e0, e2)
-            2 -> SparseVectorTrie2(level, size, zero, sparsity and 4.inv(), e0, e1)
+            0 -> SparseVectorTrie2(level, size, zero, sparsity and (1 shl trieIndex).inv(), e1, e2)
+            1 -> SparseVectorTrie2(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0, e2)
+            2 -> SparseVectorTrie2(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0, e1)
             else -> this
         }
     }
@@ -882,10 +882,10 @@ class SparseVectorTrie4<T>(val level: Int, val size: Int, val zero: T, val spars
         val i = sparseIndex(sparsity, trieIndex)
         return when (i)
         {
-            0 -> SparseVectorTrie3(level, size, zero, sparsity and 1.inv(), e1, e2, e3)
-            1 -> SparseVectorTrie3(level, size, zero, sparsity and 2.inv(), e0, e2, e3)
-            2 -> SparseVectorTrie3(level, size, zero, sparsity and 4.inv(), e0, e1, e3)
-            3 -> SparseVectorTrie3(level, size, zero, sparsity and 8.inv(), e0, e1, e2)
+            0 -> SparseVectorTrie3(level, size, zero, sparsity and (1 shl trieIndex).inv(), e1, e2, e3)
+            1 -> SparseVectorTrie3(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0, e2, e3)
+            2 -> SparseVectorTrie3(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0, e1, e3)
+            3 -> SparseVectorTrie3(level, size, zero, sparsity and (1 shl trieIndex).inv(), e0, e1, e2)
             else -> this
         }
     }

@@ -70,9 +70,27 @@ class SparseVector0<T>(val size: Int, val zero: T) : Vector<T>
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         return SparseVector1(size, zero, 1 shl index, value)
+    }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // already empty, so we can return this
+        //
+        return this;
     }
 }
 
@@ -99,6 +117,14 @@ class SparseVector1<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T)
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -123,6 +149,23 @@ class SparseVector1<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T)
             0 -> return SparseVector2(size, zero, sparsity4, value, e0)
         }
         return SparseVector2(size, zero, sparsity4, e0, value)
+    }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val i = sparseIndex(sparsity, index)
+        return when (i)
+        {
+            0 ->  SparseVector0(size, zero)
+            else -> this
+        }
+
     }
 }
 
@@ -150,6 +193,14 @@ class SparseVector2<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -177,6 +228,25 @@ class SparseVector2<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         }
         return SparseVector3(size, zero, sparsity4, e0, e1, value)
     }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val i = sparseIndex(sparsity, index)
+        return when (i)
+        {
+            0 -> SparseVector1(size, zero, sparsity and 1.inv(), e1)
+            1 -> SparseVector1(size, zero, sparsity and 2.inv(), e0)
+            else -> this
+        }
+
+    }
+
 }
 
 class SparseVector3<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T, val e1: T, val e2: T) : Vector<T>
@@ -204,6 +274,14 @@ class SparseVector3<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -233,6 +311,26 @@ class SparseVector3<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         }
         return return SparseVector4(size, zero, sparsity4, e0, e1, e2, value)
     }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val i = sparseIndex(sparsity, index)
+        return when (i)
+        {
+            0 -> SparseVector2(size, zero, sparsity and 1.inv(), e1, e2)
+            1 -> SparseVector2(size, zero, sparsity and 2.inv(), e0, e2)
+            2 -> SparseVector2(size, zero, sparsity and 4.inv(), e0, e1)
+            else -> this
+        }
+
+    }
+
 }
 
 class SparseVector4<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T, val e1: T, val e2: T, val e3: T) : Vector<T>
@@ -261,6 +359,14 @@ class SparseVector4<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -296,6 +402,26 @@ class SparseVector4<T>(val size: Int, val zero: T, val sparsity: Int, val e0: T,
         //
         throw IndexOutOfBoundsException();
     }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val i = sparseIndex(sparsity, index)
+        return when (i)
+        {
+            0 -> SparseVector3(size, zero, sparsity and 1.inv(), e1, e2, e3)
+            1 -> SparseVector3(size, zero, sparsity and 2.inv(), e0, e2, e3)
+            2 -> SparseVector3(size, zero, sparsity and 3.inv(), e0, e1, e3)
+            3 -> SparseVector3(size, zero, sparsity and 4.inv(), e0, e1, e2)
+            else -> this
+        }
+
+    }
 }
 
 class SparseVectorTrie0<T>(val level: Int, val size: Int, val zero: T) : Vector<T>
@@ -313,6 +439,14 @@ class SparseVectorTrie0<T>(val level: Int, val size: Int, val zero: T) : Vector<
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         val trieIndex = index / childSize
@@ -324,6 +458,16 @@ class SparseVectorTrie0<T>(val level: Int, val size: Int, val zero: T) : Vector<
         // add at index zero
         //
         return SparseVectorTrie1(level, size, zero, trieSparsity, SparseVectors.ofSize(level - 1, sizeOfChild, zero).set(indexInChild, value))
+    }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // this is already empty, so return this
+        //
+        return this
     }
 
 }
@@ -356,6 +500,14 @@ class SparseVectorTrie1<T>(val level: Int, val size: Int, val zero: T, val spars
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -389,6 +541,40 @@ class SparseVectorTrie1<T>(val level: Int, val size: Int, val zero: T, val spars
         val indexInChild = index % childSize
         return SparseVectorTrie2(level, size, zero, trieSparsity, e0, SparseVectors.ofSize(level - 1, sizeOfChild, zero).set(indexInChild, value))
     }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // short circuit if the value we intend to clear is already zero
+        //
+        return if(zero == this.get(index)) this else innerClear(index)
+    }
+
+
+    /**
+     * internal implementation of clear that
+     * presumes the index is in bounds
+     * and the value to be cleared is non-zero
+     *
+     * @param index must be in bounds and reference and non-zero value
+     * @return a new vector with the value cleared to zero
+     */
+    internal fun innerClear(index: Int): Vector<T>
+    {
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val trieIndex = index / childSize
+        val i = sparseIndex(sparsity, trieIndex)
+        return when (i)
+        {
+            0 ->  SparseVectorTrie0(level, size, zero)
+            else -> this
+        }
+    }
 }
 
 class SparseVectorTrie2<T>(val level: Int, val size: Int, val zero: T, val sparsity: Int, val e0: Vector<T>, val e1: Vector<T>) : Vector<T>
@@ -418,6 +604,14 @@ class SparseVectorTrie2<T>(val level: Int, val size: Int, val zero: T, val spars
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -453,6 +647,42 @@ class SparseVectorTrie2<T>(val level: Int, val size: Int, val zero: T, val spars
         val indexInChild = index % childSize
         return SparseVectorTrie3(level, size, zero, trieSparsity, e0, e1, SparseVectors.ofSize(level - 1, sizeOfChild, zero).set(indexInChild, value))
     }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // short circuit if the value we intend to clear is already zero
+        //
+        return if(zero == this.get(index)) this else innerClear(index)
+    }
+
+
+    /**
+     * internal implementation of clear that
+     * presumes the index is in bounds
+     * and the value to be cleared is non-zero
+     *
+     * @param index must be in bounds and reference and non-zero value
+     * @return a new vector with the value cleared to zero
+     */
+    internal fun innerClear(index: Int): Vector<T>
+    {
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val trieIndex = index / childSize
+        val i = sparseIndex(sparsity, trieIndex)
+        return when (i)
+        {
+            0 -> SparseVectorTrie1(level, size, zero, sparsity and 1.inv(), e1)
+            1 -> SparseVectorTrie1(level, size, zero, sparsity and 2.inv(), e0)
+            else -> this
+        }
+    }
+
 }
 
 class SparseVectorTrie3<T>(val level: Int, val size: Int, val zero: T, val sparsity: Int, val e0: Vector<T>, val e1: Vector<T>, val e2: Vector<T>) : Vector<T>
@@ -482,6 +712,14 @@ class SparseVectorTrie3<T>(val level: Int, val size: Int, val zero: T, val spars
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -491,7 +729,6 @@ class SparseVectorTrie3<T>(val level: Int, val size: Int, val zero: T, val spars
         val trieIndex = index / childSize
         when (sparseIndex(sparsity, trieIndex))
         {
-        // update the sparse element at the given index
             0 -> return SparseVectorTrie3(level, size, zero, sparsity, e0.set(index % childSize, value), e1, e2)
             1 -> return SparseVectorTrie3(level, size, zero, sparsity, e0, e1.set(index % childSize, value), e2)
             2 -> return SparseVectorTrie3(level, size, zero, sparsity, e0, e1, e2.set(index % childSize, value))
@@ -516,6 +753,42 @@ class SparseVectorTrie3<T>(val level: Int, val size: Int, val zero: T, val spars
         val sizeOfChild = if(index < ((size / childSize) * childSize)) childSize else (size % childSize)
         val indexInChild = index % childSize
         return SparseVectorTrie4(level, size, zero, trieSparsity, e0, e1, e2, SparseVectors.ofSize(level - 1, sizeOfChild, zero).set(indexInChild, value))
+    }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // short circuit if the value we intend to clear is already zero
+        //
+        return if(zero == this.get(index)) this else innerClear(index)
+    }
+
+
+    /**
+     * internal implementation of clear that
+     * presumes the index is in bounds
+     * and the value to be cleared is non-zero
+     *
+     * @param index must be in bounds and reference and non-zero value
+     * @return a new vector with the value cleared to zero
+     */
+    internal fun innerClear(index: Int): Vector<T>
+    {
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val trieIndex = index / childSize
+        val i = sparseIndex(sparsity, trieIndex)
+        return when (i)
+        {
+            0 -> SparseVectorTrie2(level, size, zero, sparsity and 1.inv(), e1, e2)
+            1 -> SparseVectorTrie2(level, size, zero, sparsity and 2.inv(), e0, e2)
+            2 -> SparseVectorTrie2(level, size, zero, sparsity and 4.inv(), e0, e1)
+            else -> this
+        }
     }
 }
 
@@ -551,6 +824,14 @@ class SparseVectorTrie4<T>(val level: Int, val size: Int, val zero: T, val spars
 
     override fun set(index: Int, value: T): Vector<T>
     {
+        if(zero == value)
+        {
+            //
+            // the value is being set to zero, so clear it
+            //
+            return clear(index);
+        }
+
         if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
 
         //
@@ -560,18 +841,53 @@ class SparseVectorTrie4<T>(val level: Int, val size: Int, val zero: T, val spars
         val trieIndex = index / childSize
         when (trieIndex)
         {
-        // update the sparse element at the given index
             0 -> return SparseVectorTrie4(level, size, zero, sparsity, e0.set(index % childSize, value), e1, e2, e3)
             1 -> return SparseVectorTrie4(level, size, zero, sparsity, e0, e1.set(index % childSize, value), e2, e3)
             2 -> return SparseVectorTrie4(level, size, zero, sparsity, e0, e1, e2.set(index % childSize, value), e3)
             3 -> return SparseVectorTrie4(level, size, zero, sparsity, e0, e1, e2, e3.set(index % childSize, value))
-
         }
 
         //
         // this is a full trie, so their are no zero elements
         //
         throw IndexOutOfBoundsException();
+    }
+
+    override fun clear(index: Int): Vector<T>
+    {
+        if ((index < 0) || (index >= size)) throw IndexOutOfBoundsException()
+
+        //
+        // short circuit if the value we intend to clear is already zero
+        //
+        return if(zero == this.get(index)) this else innerClear(index)
+    }
+
+
+    /**
+     * internal implementation of clear that
+     * presumes the index is in bounds
+     * and the value to be cleared is non-zero
+     *
+     * @param index must be in bounds and reference and non-zero value
+     * @return a new vector with the value cleared to zero
+     */
+    internal fun innerClear(index: Int): Vector<T>
+    {
+        //
+        // calculate number of 1 bits in sparsity, then use this to get offset of non-zero element
+        // if it corresponds to a current element, then this is an update
+        //
+        val trieIndex = index / childSize
+        val i = sparseIndex(sparsity, trieIndex)
+        return when (i)
+        {
+            0 -> SparseVectorTrie3(level, size, zero, sparsity and 1.inv(), e1, e2, e3)
+            1 -> SparseVectorTrie3(level, size, zero, sparsity and 2.inv(), e0, e2, e3)
+            2 -> SparseVectorTrie3(level, size, zero, sparsity and 4.inv(), e0, e1, e3)
+            3 -> SparseVectorTrie3(level, size, zero, sparsity and 8.inv(), e0, e1, e2)
+            else -> this
+        }
     }
 }
 

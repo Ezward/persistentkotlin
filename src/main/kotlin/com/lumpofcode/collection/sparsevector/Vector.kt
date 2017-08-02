@@ -13,4 +13,5 @@ interface Vector<T>
     fun size(): Int
     fun get(index: Int): T
     fun set(index: Int, value: T): Vector<T>
+    fun clear(index: Int): Vector<T>
 }

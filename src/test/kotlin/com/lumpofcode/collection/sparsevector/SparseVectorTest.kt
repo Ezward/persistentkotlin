@@ -269,6 +269,8 @@ class SparseVectorTest
     //
     fun testReverseVectorOfN(n: Int)
     {
+        println(n)
+
         var vector: Vector<Int> = SparseVectors.ofSize(n, 0)
 
         for (i in (n - 1) downTo 0)
@@ -297,9 +299,6 @@ class SparseVectorTest
     fun testInsideVectorOfN(n: Int)
     {
         var vector: Vector<Int> = SparseVectors.ofSize(n, 0)
-
-        println(n)
-
 
         val m = n / 2;
         if((n - m * 2) > 0)// odd number
